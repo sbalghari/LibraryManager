@@ -1,9 +1,7 @@
-#pragma once
-
 #include<iostream>
 #include<vector>
 
-#pragma region 
+#pragma region main
 
 using namespace std;
 
