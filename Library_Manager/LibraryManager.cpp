@@ -15,7 +15,28 @@ class LibraryManager{
         string book_name;
         std::vector<string> books;
         int NUMBER_OF_BOOKS = 0;
+        const string books_txt = "books.txt";
+
+        void load_books(){
+            ifstream file(books_txt);
+            if(!file.is_open()){
+                cerr << "Error opening the file!";
+                return;
+                
+            }
+            string line;
+            while(getline(file, line)){
+                books.push_back(line);
+                NUMBER_OF_BOOKS++;
+            }
+            file.close();
+        }
+
     public:
+        LibraryManager(){
+            load_books();
+        };
+    
         void main(){
             while (true){
                 int choice;
@@ -25,7 +46,8 @@ class LibraryManager{
                     << "\t\t\t2.Delete Books\n"
                     << "\t\t\t3.Display Books\n"
                     << "\t\t\t4.Update Books\n"
-                    << "\t\t\t5.Exit\n"
+                    << "\t\t\t5.save books\n"
+                    << "\t\t\t6.Exit\n"
                     << endl;
                 cin >> choice;
 
@@ -43,6 +65,9 @@ class LibraryManager{
                         update_books();
                         break;
                     case 5:
+                        save_books();
+                        break;
+                    case 6:
                         cout << "\nExiting...\n";
                         std::this_thread::sleep_for(std::chrono::seconds(1));
                         return;
@@ -57,6 +82,7 @@ class LibraryManager{
         }
 
         #pragma region Helper functions
+
         void add_books(){
 
             try{
@@ -73,16 +99,40 @@ class LibraryManager{
                     char again;
                     cout << "Type (y) to add again and anything else to go back!" << endl;
                     cin >> again;
+                    cin.ignore();
 
                     if(again == 'y'){continue;}
                     else{break;}
                 }
             }
             catch(const std::exception& e){
-                std::cerr << e.what() << '\n';
+                cerr << e.what() << '\n';
             }
         }
 
+        void save_books() {
+            if(books.empty()){
+                cout << "No books entered to save!" << endl;
+                return;
+            }
+            try{
+                ofstream file(books_txt);
+                if (!file.is_open()){
+                    cerr << "Unable to open file";
+                    return;
+                }
+                else{
+                    for(auto &book : books){
+                        file << book << endl;
+                    }
+                    file.close();
+                    cout << "Books saved successfully!" << endl;
+                }
+            }
+            catch(const std::exception& e){
+                cerr << e.what() << '\n';
+            }
+        }
         void delete_books(){
             try{
                 if(books.empty()){
@@ -109,7 +159,7 @@ class LibraryManager{
                 }
             }
             catch(const std::exception& e){
-                std::cerr << e.what() << '\n';
+                cerr << e.what() << '\n';
             }
             
             
@@ -120,9 +170,11 @@ class LibraryManager{
                 cout << "No books in the library..." << endl;
                 return;
             }
-            for(int i = 0; i < books.size(); i++){
-                cout << books[i] << endl;
-            }    
+            else{
+                for(int i = 0; i < books.size(); i++){
+                    cout << books[i] << endl;
+                }
+            }        
         }
 
         void update_books(){
@@ -155,7 +207,7 @@ class LibraryManager{
                 }
             }
             catch(const std::exception& e){
-                std::cerr << e.what() << '\n';
+                cerr << e.what() << '\n';
             }
             
         }
