@@ -3,3 +3,4 @@ Calculus
 Linear Algebra
 Artificial Intelligence
 Digital Logics
+Trigonometry

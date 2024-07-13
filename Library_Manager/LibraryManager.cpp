@@ -11,6 +11,18 @@
 using namespace std;
 
 class LibraryManager{
+    /*  
+    * @brief Simple implementation of the library manager.
+
+    * This program provides the following functionalities to the user.
+    * -> Add books to the library.
+    * -> Remove books from the library
+    * -> Edit the books in the library
+    * -> Display the books in the library
+    * -> Save the books in the library
+    * 
+    * @return void
+    */
     private:
         string book_name;
         std::vector<string> books;
@@ -40,17 +52,18 @@ class LibraryManager{
         void main(){
             while (true){
                 int choice;
-                cout<< "\n\t\t--------WellCome To The Library--------\n" << "\n"
-                    << "\t\t\tWhat do you want to...\n" 
-                    << "\t\t\t1.Add Books\n"
-                    << "\t\t\t2.Delete Books\n"
-                    << "\t\t\t3.Display Books\n"
-                    << "\t\t\t4.Update Books\n"
-                    << "\t\t\t5.save books\n"
-                    << "\t\t\t6.Exit\n"
-                    << endl;
+                cout<< "----------------------------------------------------------------\n"
+                    << "---------------- WellCome To The Library Manager----------------\n" 
+                    << "----------------------What you want to do?----------------------\n"
+                    << "-------------------------1.Add Books----------------------------\n"
+                    << "------------------------2.Delete Books--------------------------\n"
+                    << "------------------------3.Display Books-------------------------\n"
+                    << "------------------------4.Update Books--------------------------\n"
+                    << "-------------------------5.Save books---------------------------\n"
+                    << "----------------------------6.Exit------------------------------\n"
+                    << "----------------------------------------------------------------\n"
+                    << endl <<">";
                 cin >> choice;
-
                 switch(choice){
                     case 1:
                         add_books();
@@ -71,12 +84,10 @@ class LibraryManager{
                         cout << "\nExiting...\n";
                         std::this_thread::sleep_for(std::chrono::seconds(1));
                         return;
-                        break;
                     default:
                         cout << "Invalid Choice!\nExiting in 2 seconds..." << endl;
                         std::this_thread::sleep_for(std::chrono::seconds(2));
                         return;
-                        break;
                     }
             }    
         }
@@ -93,13 +104,14 @@ class LibraryManager{
                     
                     books.push_back(book_name);
 
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+
                     cout << "\"" << book_name << "\"" << " added successfully..." << endl;
                     NUMBER_OF_BOOKS++;
 
                     char again;
                     cout << "Type (y) to add again and anything else to go back!" << endl;
                     cin >> again;
-                    cin.ignore();
 
                     if(again == 'y'){continue;}
                     else{break;}
@@ -126,12 +138,15 @@ class LibraryManager{
                         file << book << endl;
                     }
                     file.close();
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
                     cout << "Books saved successfully!" << endl;
                 }
             }
             catch(const std::exception& e){
                 cerr << e.what() << '\n';
             }
+            cout << "Returning to main menu..." << endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
         void delete_books(){
             try{
@@ -148,6 +163,7 @@ class LibraryManager{
                     if(book_name == books[i]){
                         books.erase(books.begin() + i);
                         NUMBER_OF_BOOKS--;
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
                         cout << "\"" <<book_name << "\"" << " deleted successfully..." << endl;
                         found = true;
                         break;
@@ -161,8 +177,8 @@ class LibraryManager{
             catch(const std::exception& e){
                 cerr << e.what() << '\n';
             }
-            
-            
+            cout << "Returning to main menu..." << endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));    
         }
 
         void display_books(){
@@ -170,11 +186,15 @@ class LibraryManager{
                 cout << "No books in the library..." << endl;
                 return;
             }
-            else{
-                for(int i = 0; i < books.size(); i++){
-                    cout << books[i] << endl;
-                }
-            }        
+            cout << "\nBooks in the library:" << endl;
+            cout << "------------------------" << endl;
+            for(const auto& book : books){
+                cout << book << endl;
+            }
+            cout << "------------------------" << endl;
+            cout << "\nReturning to main menu in 3 seconds..." << endl;
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+                    
         }
 
         void update_books(){
@@ -188,6 +208,7 @@ class LibraryManager{
                 getline(cin, book_name);
                 cout << "Enter the new name of the book..." << endl;
                 string new_name;
+                cin.ignore();
                 getline(cin, new_name);
 
                 bool found = false;
@@ -209,14 +230,16 @@ class LibraryManager{
             catch(const std::exception& e){
                 cerr << e.what() << '\n';
             }
-            
+            cout << "Returning to main menu..." << endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
         #pragma endregion
 };
 
 int main(){
 
-    LibraryManager lib_manager;
-    lib_manager.main();
+    LibraryManager MyLibrary;
+    MyLibrary.main();
+
     return 0;
 }
