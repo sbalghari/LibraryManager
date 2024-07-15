@@ -21,11 +21,12 @@ class LibraryManager{
     * -> Display the books in the library
     * -> Save the books in the library
     * 
-    * @return void
+    * TODO: Try to make this libraryManager a GUI library manager.
+    * 
     */
     private:
         string book_name;
-        std::vector<string> books;
+        vector<string> books;
         int NUMBER_OF_BOOKS = 0;
         const string books_txt = "books.txt";
 
@@ -34,7 +35,6 @@ class LibraryManager{
             if(!file.is_open()){
                 cerr << "Error opening the file!";
                 return;
-                
             }
             string line;
             while(getline(file, line)){
@@ -64,6 +64,12 @@ class LibraryManager{
                     << "----------------------------------------------------------------\n"
                     << endl <<">";
                 cin >> choice;
+                if(cin.fail()) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid input. Please enter a number." << endl;
+                    continue;
+                }
                 switch(choice){
                     case 1:
                         add_books();
@@ -82,11 +88,9 @@ class LibraryManager{
                         break;
                     case 6:
                         cout << "\nExiting...\n";
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
                         return;
                     default:
-                        cout << "Invalid Choice!\nExiting in 2 seconds..." << endl;
-                        std::this_thread::sleep_for(std::chrono::seconds(2));
+                        cout << "Invalid Choice!\nExiting..." << endl;
                         return;
                     }
             }    
@@ -103,8 +107,6 @@ class LibraryManager{
                     getline(cin, book_name);
                     
                     books.push_back(book_name);
-
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
 
                     cout << "\"" << book_name << "\"" << " added successfully..." << endl;
                     NUMBER_OF_BOOKS++;
@@ -137,16 +139,14 @@ class LibraryManager{
                     for(auto &book : books){
                         file << book << endl;
                     }
-                    file.close();
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
                     cout << "Books saved successfully!" << endl;
+                    file.close();
                 }
             }
             catch(const std::exception& e){
                 cerr << e.what() << '\n';
             }
             cout << "Returning to main menu..." << endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
         void delete_books(){
             try{
@@ -163,7 +163,6 @@ class LibraryManager{
                     if(book_name == books[i]){
                         books.erase(books.begin() + i);
                         NUMBER_OF_BOOKS--;
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
                         cout << "\"" <<book_name << "\"" << " deleted successfully..." << endl;
                         found = true;
                         break;
@@ -178,7 +177,6 @@ class LibraryManager{
                 cerr << e.what() << '\n';
             }
             cout << "Returning to main menu..." << endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));    
         }
 
         void display_books(){
@@ -192,7 +190,7 @@ class LibraryManager{
                 cout << book << endl;
             }
             cout << "------------------------" << endl;
-            cout << "\nReturning to main menu in 3 seconds..." << endl;
+            cout << "\nReturning to main menu..." << endl;
             std::this_thread::sleep_for(std::chrono::seconds(3));
                     
         }
@@ -208,7 +206,6 @@ class LibraryManager{
                 getline(cin, book_name);
                 cout << "Enter the new name of the book..." << endl;
                 string new_name;
-                cin.ignore();
                 getline(cin, new_name);
 
                 bool found = false;
@@ -217,7 +214,6 @@ class LibraryManager{
                     if(book_name == books[i]){
                         found = true;
                         books[i] = new_name;
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
                         cout << "\"" << book_name << "\"" << " updated successfully to " << "\"" << new_name << "\"" << endl;
                         break;
                     } 
@@ -231,7 +227,6 @@ class LibraryManager{
                 cerr << e.what() << '\n';
             }
             cout << "Returning to main menu..." << endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
         #pragma endregion
 };
