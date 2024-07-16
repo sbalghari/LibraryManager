@@ -67,7 +67,7 @@ public:
                 cout << "Invalid input! Please enter a number." << endl;
                 continue;
             }
-            cin.ignore(); // Clear the buffer after reading choice
+            cin.ignore();
             switch (choice) {
                 case 1:
                     add_books();
@@ -106,7 +106,7 @@ public:
                 char query;
                 cout << "Type (y) to add another book, or anything else to go back!" << endl;
                 cin >> query;
-                cin.ignore(); // Clear the buffer after reading query
+                cin.ignore();
                 if (query != 'y') {
                     break;
                 }
