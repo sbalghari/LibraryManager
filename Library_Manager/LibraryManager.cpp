@@ -15,12 +15,17 @@ class LibraryManager {
     /*
     Simple implementation of a library management system.
 
-    This program provides the following functionalities to the user.
+    This program provides the following functionalities to the user:
     -> Add books to the library.
     -> Remove books from the library.
     -> Edit the books in the library.
     -> Display the books in the library.
     -> Save the books in a text file.
+    -> Search for a book by name.
+    -> Sort the books alphabetically.
+    -> Reload books from the text file.
+    -> Undo the last add, delete, or update operation.
+    -> Display statistics such as the total number of books.
 
     */
 private:
