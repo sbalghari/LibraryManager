@@ -1,5 +1,4 @@
 #pragma region headers
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -11,7 +10,58 @@
 
 using namespace std;
 
+bool authenticate() {
+    
+    string query1, query2;
+    const string USERNAME = "saif";
+    const string PASSWORD = "0000";
+    bool result = false;
+
+    while(true) {
+
+        cout << "Enter your username: " << endl;
+        cin >> query1;
+        
+        if (query1.empty()){
+            cout << "Username cannot be empty." << endl;
+            result = false;
+        }
+
+        if (query1 == USERNAME){
+            int attempts = 3;
+            while (attempts > 0){
+
+                cout << "Enter your password: " << endl;
+                cin >> query2;
+
+                if (query2.empty()){
+                    cout << "Password cannot be empty." << endl;
+                    result = false;
+                    continue;
+                }
+                if (query2 == PASSWORD){
+                    cout << "Login successful!" << endl;
+                    result = true;
+                    return true;
+                }
+                else {
+                    attempts--;
+                    cout << "Incorrect password! " << attempts << " attempts remaining." << endl;
+                }
+            }
+            cout << "Too many wrong attempts!" << endl;
+            return false;
+        }
+        else {
+            cout << "Invalid username." << endl;
+            continue;
+        }
+    }
+    return result;
+}
+
 class LibraryManager {
+
     /*
     Simple implementation of a library management system.
 
@@ -28,6 +78,7 @@ class LibraryManager {
     -> Display statistics such as the total number of books.
 
     */
+   
 private:
     string book_name;
     vector<string> books;
@@ -46,6 +97,19 @@ private:
         while (getline(file, line)) {
             books.push_back(line);
         }
+        file.close();
+    }
+    void save_books_to_a_file() {
+        ofstream file(books_txt);
+        if (!file.is_open()) {
+            cerr << "Unable to open file!" << endl;
+            return;
+        }
+        for (const auto &book : books) {
+            file << book << endl;
+        }
+        cout << "Books saved successfully!" << endl;
+        this_thread::sleep_for(chrono::seconds(1));
         file.close();
     }
 
@@ -78,7 +142,7 @@ public:
                 << "*    11. Exit the Program                                      *\n"
                 << "*                                                              *\n"
                 << "****************************************************************\n"
-                << endl << ">";
+                << endl << "> ";
 
             cin >> choice;
             if (cin.fail()) {
@@ -164,17 +228,7 @@ public:
             return;
         }
         try {
-            ofstream file(books_txt);
-            if (!file.is_open()) {
-                cerr << "Unable to open file!" << endl;
-                return;
-            }
-            for (const auto &book : books) {
-                file << book << endl;
-            }
-            cout << "Books saved successfully!" << endl;
-            this_thread::sleep_for(chrono::seconds(1));
-            file.close();
+            save_books_to_a_file();
         } catch (const exception &e) {
             cerr << e.what() << '\n';
         }
@@ -310,7 +364,10 @@ public:
 };
 
 int main() {
-    LibraryManager MyLibrary;
-    MyLibrary.main();
+
+    if (authenticate()) {
+        LibraryManager library_instance;
+        library_instance.main();
+    }
     return 0;
 }
