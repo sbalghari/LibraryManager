@@ -15,7 +15,6 @@ bool authenticate() {
     string query1, query2;
     const string USERNAME = "saif";
     const string PASSWORD = "0000";
-    bool result = false;
 
     while(true) {
 
@@ -24,7 +23,7 @@ bool authenticate() {
         
         if (query1.empty()){
             cout << "Username cannot be empty." << endl;
-            result = false;
+            return false;
         }
 
         if (query1 == USERNAME){
@@ -36,12 +35,10 @@ bool authenticate() {
 
                 if (query2.empty()){
                     cout << "Password cannot be empty." << endl;
-                    result = false;
                     continue;
                 }
                 if (query2 == PASSWORD){
                     cout << "Login successful!" << endl;
-                    result = true;
                     return true;
                 }
                 else {
@@ -57,7 +54,6 @@ bool authenticate() {
             continue;
         }
     }
-    return result;
 }
 
 class LibraryManager {
@@ -225,6 +221,8 @@ public:
     void save_books() {
         if (books.empty()) {
             cout << "No books to save!" << endl;
+            this_thread::sleep_for(chrono::seconds(1));
+
             return;
         }
         try {
@@ -333,6 +331,7 @@ public:
     void undo_last_operation() {
         if (last_operation.empty()) {
             cout << "No operations to undo!" << endl;
+            this_thread::sleep_for(chrono::seconds(1));
             return;
         }
         if (last_operation == "add") {

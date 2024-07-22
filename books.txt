@@ -1,6 +1,7 @@
-Basic Algebra
-Calculus
-Linear Algebra
-Artificial Intelligence
 Digital Logics
+Basic Algebra
+Linear Algebra
+Physics
+Calculus
+Artificial Intelligence
 Intro To Trigonometry
