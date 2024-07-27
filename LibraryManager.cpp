@@ -10,188 +10,233 @@
 
 using namespace std;
 
-bool authenticate() {
-    
-    string query1, query2;
-    const string USERNAME = "saif";
-    const string PASSWORD = "0000";
+class Accounts {
+    public:
+        string account_username;
+        string account_password;
 
-    while(true) {
-
-        cout << "Enter your username: " << endl;
-        cin >> query1;
+    public:
+        Accounts(string accname, string accpass)
+            : account_username(accname), account_password(accpass) {}
         
-        if (query1.empty()){
-            cout << "Username cannot be empty." << endl;
-            return false;
+        void set_account_username(const string& accname) {
+            account_username = accname;
         }
 
-        if (query1 == USERNAME){
-            int attempts = 3;
-            while (attempts > 0){
+        void set_account_password(const string& accpass) {
+            account_password = accpass;
+        }
 
-                cout << "Enter your password: " << endl;
-                cin >> query2;
+        void display_account_info(){
+            cout << "Username: " << account_username << endl;
+            cout << "Password: " << account_password << endl;
+        }
+};
 
-                if (query2.empty()){
-                    cout << "Password cannot be empty." << endl;
-                    continue;
-                }
-                if (query2 == PASSWORD){
-                    cout << "Login successful!" << endl;
-                    return true;
-                }
-                else {
-                    attempts--;
-                    cout << "Incorrect password! " << attempts << " attempts remaining." << endl;
+class AccountManagement {
+    private:
+        vector<Accounts> accounts;
+
+    public:
+        AccountManagement() {
+            while (true) {
+                int choice;
+                cout << "1. Add a new account." << endl;
+                cout << "2. Remove an existing account." << endl;
+                cout << "3. Log in to an existing account." << endl;
+                cout << "4. Exit." << endl;
+                cout << "Enter your choice: ";
+                
+                cin >> choice;
+
+                switch (choice) {
+                    case 1:
+                        add_account();
+                        break;
+                    case 2:
+                        remove_account();
+                        break;
+                    case 3:
+                        login_account();
+                        break;
+                    case 4:
+                        exit(0);
+                    default:
+                        cout << "Invalid choice. Please try again." << endl;
                 }
             }
-            cout << "Too many wrong attempts!" << endl;
-            return false;
         }
-        else {
-            cout << "Invalid username." << endl;
-            continue;
+
+        void add_account() {
+            string username, password;
+            cout << "Enter a username: ";
+            cin >> username;
+            cout << "Enter a password: ";
+            cin >> password;
+
+            accounts.push_back(Accounts(username, password));
+            cout << "Account created successfully." << endl;
         }
-    }
-}
+
+        void remove_account() {
+            string username;
+            cout << "Enter the username of the account to remove: ";
+            cin >> username;
+
+            auto it = remove_if(accounts.begin(), accounts.end(), [&username](const Accounts& acc) {
+                return acc.account_username == username;
+            });
+
+            if (it != accounts.end()) {
+                accounts.erase(it, accounts.end());
+                cout << "Account removed successfully." << endl;
+            } else {
+                cout << "Account not found." << endl;
+            }
+        }
+
+        bool login_account() {
+            bool loginsuccess = false;
+            string username, password;
+            cout << "Enter username: ";
+            cin >> username;
+            cout << "Enter password: ";
+            cin >> password;
+
+            for (auto& acc : accounts) {
+                if (acc.account_username == username && acc.account_password == password) {
+                    cout << "Login successful!" << endl;
+                    loginsuccess = true;
+                    break;
+                }
+                else{
+                    cout << "Invalid username or password." << endl;
+                    loginsuccess = false;
+                }
+            }
+            
+            return loginsuccess;
+        }
+};
 
 class LibraryManager {
+    private:
+        string book_name;
+        vector<string> books;
+        const string books_txt = "books.txt";
+        string last_operation;
+        string last_book_name;
+        string last_new_name;
 
-    /*
-    Simple implementation of a library management system.
-
-    This program provides the following functionalities to the user:
-    -> Add books to the library.
-    -> Remove books from the library.
-    -> Edit the books in the library.
-    -> Display the books in the library.
-    -> Save the books in a text file.
-    -> Search for a book by name.
-    -> Sort the books alphabetically.
-    -> Reload books from the text file.
-    -> Undo the last add, delete, or update operation.
-    -> Display statistics such as the total number of books.
-
-    */
-   
-private:
-    string book_name;
-    vector<string> books;
-    const string books_txt = "books.txt";
-    string last_operation;
-    string last_book_name;
-    string last_new_name;
-
-    void load_books() {
-        ifstream file(books_txt);
-        if (!file.is_open()) {
-            cerr << "Error opening the file!" << endl;
-            return;
-        }
-        string line;
-        while (getline(file, line)) {
-            books.push_back(line);
-        }
-        file.close();
-    }
-    void save_books_to_a_file() {
-        ofstream file(books_txt);
-        if (!file.is_open()) {
-            cerr << "Unable to open file!" << endl;
-            return;
-        }
-        for (const auto &book : books) {
-            file << book << endl;
-        }
-        cout << "Books saved successfully!" << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-        file.close();
-    }
-
-public:
-    LibraryManager() {
-        load_books();
-    }
-
-    void main() {
-        while (true) {
-            int choice;
-            cout<< "****************************************************************\n"
-                << "*                                                              *\n"
-                << "*               Welcome To The Library Manager                 *\n"
-                << "*                                                              *\n"
-                << "****************************************************************\n"
-                << "*                                                              *\n"
-                << "*                   What would you like to do?                 *\n"
-                << "*                                                              *\n"
-                << "*    1. Add Books                                              *\n"
-                << "*    2. Delete Books                                           *\n"
-                << "*    3. Display Books                                          *\n"
-                << "*    4. Update Books                                           *\n"
-                << "*    5. Save Books                                             *\n"
-                << "*    6. Search Books                                           *\n"
-                << "*    7. Sort Books                                             *\n"
-                << "*    8. Reload Books From File                                 *\n"
-                << "*    9. Undo Last Operation                                    *\n"
-                << "*    10. Display Statistics                                    *\n"
-                << "*    11. Exit the Program                                      *\n"
-                << "*                                                              *\n"
-                << "****************************************************************\n"
-                << endl << "> ";
-
-            cin >> choice;
-            if (cin.fail()) {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input! Please enter a number." << endl;
-                continue;
+        void load_books() {
+            ifstream file(books_txt);
+            if (!file.is_open()) {
+                cerr << "Error opening the file!" << endl;
+                return;
             }
-            cin.ignore();
-            switch (choice) {
-                case 1:
-                    add_books();
-                    break;
-                case 2:
-                    delete_books();
-                    break;
-                case 3:
-                    display_books();
-                    break;
-                case 4:
-                    update_books();
-                    break;
-                case 5:
-                    save_books();
-                    break;
-                case 6:
-                    search_books();
-                    break;
-                case 7:
-                    sort_books();
-                    break;
-                case 8:
-                    reload_books();
-                    break;
-                case 9:
-                    undo_last_operation();
-                    break;
-                case 10:
-                    display_statistics();
-                    break;
-                case 11:
-                    cout << "\nExiting...\n";
-                    return;
-                default:
-                    cout << "Invalid choice! Please enter a number between 1 and 11." << endl;
+            string line;
+            while (getline(file, line)) {
+                books.push_back(line);
+            }
+            file.close();
+        }
+
+        void save_books_to_file() {
+            ofstream file(books_txt);
+            if (!file.is_open()) {
+                cerr << "Unable to open file!" << endl;
+                return;
+            }
+            for (const auto& book : books) {
+                file << book << endl;
+            }
+            cout << "Books saved successfully!" << endl;
+            this_thread::sleep_for(chrono::seconds(1));
+            file.close();
+        }
+
+    public:
+        LibraryManager() {
+            load_books();
+        }
+
+        void main() {
+            while (true) {
+                int choice;
+                cout << "****************************************************************\n"
+                     << "*                                                              *\n"
+                     << "*               Welcome To The Library Manager                 *\n"
+                     << "*                                                              *\n"
+                     << "****************************************************************\n"
+                     << "*                                                              *\n"
+                     << "*                   What would you like to do?                 *\n"
+                     << "*                                                              *\n"
+                     << "*    1. Add Books                                              *\n"
+                     << "*    2. Delete Books                                           *\n"
+                     << "*    3. Display Books                                          *\n"
+                     << "*    4. Update Books                                           *\n"
+                     << "*    5. Save Books                                             *\n"
+                     << "*    6. Search Books                                           *\n"
+                     << "*    7. Sort Books                                             *\n"
+                     << "*    8. Reload Books From File                                 *\n"
+                     << "*    9. Undo Last Operation                                    *\n"
+                     << "*    10. Display Statistics                                    *\n"
+                     << "*    11. Exit the Program                                      *\n"
+                     << "*                                                              *\n"
+                     << "****************************************************************\n"
+                     << endl << "> ";
+
+                cin >> choice;
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid input! Please enter a number." << endl;
+                    continue;
+                }
+                cin.ignore();
+                switch (choice) {
+                    case 1:
+                        add_books();
+                        break;
+                    case 2:
+                        delete_books();
+                        break;
+                    case 3:
+                        display_books();
+                        break;
+                    case 4:
+                        update_books();
+                        break;
+                    case 5:
+                        save_books();
+                        break;
+                    case 6:
+                        search_books();
+                        break;
+                    case 7:
+                        sort_books();
+                        break;
+                    case 8:
+                        reload_books();
+                        break;
+                    case 9:
+                        undo_last_operation();
+                        break;
+                    case 10:
+                        display_statistics();
+                        break;
+                    case 11:
+                        cout << "\nExiting...\n";
+                        return;
+                    default:
+                        cout << "Invalid choice! Please enter a number between 1 and 11." << endl;
+                }
             }
         }
-    }
 
-#pragma region Helper functions
+    #pragma region Helper functions
 
-    void add_books() {
-        try {
+        void add_books() {
             while (true) {
                 cout << "Please enter the name of the book:" << endl;
                 getline(cin, book_name);
@@ -213,27 +258,18 @@ public:
                     break;
                 }
             }
-        } catch (const exception &e) {
-            cerr << e.what() << '\n';
         }
-    }
 
-    void save_books() {
-        if (books.empty()) {
-            cout << "No books to save!" << endl;
-            this_thread::sleep_for(chrono::seconds(1));
-
-            return;
+        void save_books() {
+            if (books.empty()) {
+                cout << "No books to save!" << endl;
+                this_thread::sleep_for(chrono::seconds(1));
+                return;
+            }
+            save_books_to_file();
         }
-        try {
-            save_books_to_a_file();
-        } catch (const exception &e) {
-            cerr << e.what() << '\n';
-        }
-    }
 
-    void delete_books() {
-        try {
+        void delete_books() {
             if (books.empty()) {
                 cout << "No books in the library!" << endl;
                 return;
@@ -250,29 +286,25 @@ public:
             } else {
                 cout << "Book not found!" << endl;
             }
-        } catch (const exception &e) {
-            cerr << e.what() << '\n';
+            this_thread::sleep_for(chrono::seconds(1));
         }
-        this_thread::sleep_for(chrono::seconds(1));
-    }
 
-    void display_books() {
-        if (books.empty()) {
-            cout << "No books in the library!" << endl;
-            return;
+        void display_books() {
+            if (books.empty()) {
+                cout << "No books in the library!" << endl;
+                return;
+            }
+            cout << "\nBooks in the library:" << endl;
+            cout << "------------------------" << endl;
+            for (const auto& book : books) {
+                cout << book << endl;
+            }
+            cout << "------------------------" << endl;
+            cout << "\nReturning to main menu..." << endl;
+            this_thread::sleep_for(chrono::seconds(2));
         }
-        cout << "\nBooks in the library:" << endl;
-        cout << "------------------------" << endl;
-        for (const auto &book : books) {
-            cout << book << endl;
-        }
-        cout << "------------------------" << endl;
-        cout << "\nReturning to main menu..." << endl;
-        this_thread::sleep_for(chrono::seconds(2));
-    }
 
-    void update_books() {
-        try {
+        void update_books() {
             if (books.empty()) {
                 cout << "No books in the library!" << endl;
                 return;
@@ -297,76 +329,72 @@ public:
             } else {
                 cout << "Book not found!" << endl;
             }
-        } catch (const exception &e) {
-            cerr << e.what() << '\n';
-        }
-        this_thread::sleep_for(chrono::seconds(1));
-    }
-
-    void search_books() {
-        cout << "Please enter the name of the book you want to search for:" << endl;
-        getline(cin, book_name);
-        auto it = find(books.begin(), books.end(), book_name);
-        if (it != books.end()) {
-            cout << "Book \"" << book_name << "\" found in the library." << endl;
-        } else {
-            cout << "Book not found!" << endl;
-        }
-        this_thread::sleep_for(chrono::seconds(1));
-    }
-
-    void sort_books() {
-        sort(books.begin(), books.end());
-        cout << "Books sorted alphabetically." << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-    }
-
-    void reload_books() {
-        books.clear();
-        load_books();
-        cout << "Books reloaded from the file." << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-    }
-
-    void undo_last_operation() {
-        if (last_operation.empty()) {
-            cout << "No operations to undo!" << endl;
             this_thread::sleep_for(chrono::seconds(1));
-            return;
         }
-        if (last_operation == "add") {
-            auto it = find(books.begin(), books.end(), last_book_name);
+
+        void search_books() {
+            cout << "Please enter the name of the book you want to search for:" << endl;
+            getline(cin, book_name);
+            auto it = find(books.begin(), books.end(), book_name);
             if (it != books.end()) {
-                books.erase(it);
-                cout << "Undo successful: \"" << last_book_name << "\" has been removed." << endl;
+                cout << "Book \"" << book_name << "\" found in the library." << endl;
+            } else {
+                cout << "Book not found!" << endl;
             }
-        } else if (last_operation == "delete") {
-            books.push_back(last_book_name);
-            cout << "Undo successful: \"" << last_book_name << "\" has been restored." << endl;
-        } else if (last_operation == "update") {
-            auto it = find(books.begin(), books.end(), last_new_name);
-            if (it != books.end()) {
-                *it = last_book_name;
-                cout << "Undo successful: \"" << last_new_name << "\" has been reverted to \"" << last_book_name << "\"." << endl;
-            }
+            this_thread::sleep_for(chrono::seconds(1));
         }
-        last_operation.clear();
-        this_thread::sleep_for(chrono::seconds(1));
-    }
 
-    void display_statistics() {
-        cout << "Total number of books: " << books.size() << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-    }
+        void sort_books() {
+            sort(books.begin(), books.end());
+            cout << "Books sorted alphabetically." << endl;
+            this_thread::sleep_for(chrono::seconds(1));
+        }
 
-#pragma endregion
+        void reload_books() {
+            books.clear();
+            load_books();
+            cout << "Books reloaded from the file." << endl;
+            this_thread::sleep_for(chrono::seconds(1));
+        }
+
+        void undo_last_operation() {
+            if (last_operation.empty()) {
+                cout << "No operations to undo!" << endl;
+                this_thread::sleep_for(chrono::seconds(1));
+                return;
+            }
+            if (last_operation == "add") {
+                auto it = find(books.begin(), books.end(), last_book_name);
+                if (it != books.end()) {
+                    books.erase(it);
+                    cout << "Undo successful: \"" << last_book_name << "\" has been removed." << endl;
+                }
+            } else if (last_operation == "delete") {
+                books.push_back(last_book_name);
+                cout << "Undo successful: \"" << last_book_name << "\" has been restored." << endl;
+            } else if (last_operation == "update") {
+                auto it = find(books.begin(), books.end(), last_new_name);
+                if (it != books.end()) {
+                    *it = last_book_name;
+                    cout << "Undo successful: \"" << last_new_name << "\" has been reverted to \"" << last_book_name << "\"." << endl;
+                }
+            }
+            last_operation.clear();
+            this_thread::sleep_for(chrono::seconds(1));
+        }
+
+        void display_statistics() {
+            cout << "Total number of books: " << books.size() << endl;
+            this_thread::sleep_for(chrono::seconds(1));
+        }
+
+    #pragma endregion
 };
 
 int main() {
-
-    if (authenticate()) {
-        LibraryManager library_instance;
-        library_instance.main();
+    AccountManagement account_manager;
+    if (account_manager.login_account()){
+        LibraryManager library_manager;
+        library_manager.main();
     }
-    return 0;
 }
