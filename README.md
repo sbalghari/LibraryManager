@@ -19,4 +19,9 @@ Welcome to the **Library Management System**! This console-based application pro
 
 ### 🔄 Advanced Options
 - **Undo Last Operation**: Revert the most recent add, delete, or update operation if needed.
-- **Display Statistics**: 
+- **Display Statistics**: Displays the total number of books in the library.
+
+### 👨🏻‍💼 Account Management
+- **Display Accounts**: Displays the current existing accounts, including there username and passwords.
+- **Add Accounts**: Adds new accounts.
+- **Delete Accounts**: Delete any existing accounts.
