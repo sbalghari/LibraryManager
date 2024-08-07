@@ -414,6 +414,7 @@ class AccountManagement {
             return false;
         }
 
+
         string username, password;
         cout << "Enter username: ";
         cin >> username;
@@ -452,6 +453,7 @@ class AccountManagement {
                 acc.display_account_info();
                 cout << "-----------------------------" << endl;
         }
+        return;
     }
 
     void delete_account() {
