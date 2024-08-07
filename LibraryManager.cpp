@@ -311,10 +311,42 @@ class Accounts {
 
 
 class AccountManagement {
+    private:
+    const string filename = "accounts.txt";
+
+    void load_accounts_from_file(){
+        ifstream file(filename);
+        if (file.is_open()) {
+            string username, password;
+            while (getline(file, username, ',')) {
+                getline(file, password);
+                accounts.push_back(Accounts(username, password));
+            }
+            file.close();
+        } else {
+            cout << "Error opening file: " << filename << endl;
+        }
+
+    }
+    void save_accounts_to_file(){
+        ofstream file(filename);
+        if (file.is_open()) {
+            for (const auto& acc : accounts) {
+                file << acc.account_username << "," << acc.account_password << endl;
+            }
+            file.close();
+        } else {
+            cout << "Error opening file: " << filename << endl;
+        }
+    }
 
     public:
 
     vector<Accounts> accounts;
+
+    AccountManagement() {
+        load_accounts_from_file();
+        }
 
     void main_menu() {
         int choice;
@@ -322,9 +354,10 @@ class AccountManagement {
             cout << "\n--- Main Menu ---" << endl;
             cout << "1. Sign Up" << endl;
             cout << "2. Sign In" << endl;
-            cout << "3. Delete Account" << endl;
-            cout << "4. Display Accounts" << endl;
-            cout << "5. Exit" << endl;
+            cout << "3. Save Account" << endl;
+            cout << "4. Delete Account" << endl;
+            cout << "5. Display Accounts" << endl;
+            cout << "6. Exit" << endl;
             cout << "Enter your choice: ";
             cin >> choice;
 
@@ -339,11 +372,15 @@ class AccountManagement {
                     }
                     break;
                 case 3:
-                    delete_account();
+                    save_accounts_to_file();
                     break;
                 case 4:
-                    display_account_info();
+                    delete_account();
+                    break;
                 case 5:
+                    display_account_info();
+                    break;
+                case 6:
                     exit(0);
                 default:
                     cout << "Invalid choice. Please try again." << endl;
@@ -372,21 +409,36 @@ class AccountManagement {
     }
 
     bool sign_in(){
+        if (accounts.empty()) {
+            cout << "No accounts found. Please sign up first." << endl;
+            return false;
+        }
+
         string username, password;
         cout << "Enter username: ";
         cin >> username;
-        cout << "Enter password: ";
-        cin >> password;
 
         for (auto& acc : accounts) {
-            if (acc.account_username == username && acc.account_password == password) {
-                cout << "Login successful!" << endl;
-                return true;
+            if (acc.account_username == username) {
+                cout << "Enter password: ";
+                cin >> password;
+                if(acc.account_password == password){
+                    cout << "Sign in successful." << endl;
+                    return true;
+                }
+                else{
+                    cout << "Invalid password." << endl;
+                    return false;
+                }
             }
             else{
-                cout << "Invalid username or password." << endl;
+                cout << "Invalid username." << endl;
                 return false;
             }
+            
+            cout << "Invalid username or password." << endl;
+            return false;
+            
         }
     }
 
@@ -396,7 +448,9 @@ class AccountManagement {
             return;
         }
         for (auto& acc : accounts) {
+                cout << "-----------------------------" << endl;
                 acc.display_account_info();
+                cout << "-----------------------------" << endl;
         }
     }
 
