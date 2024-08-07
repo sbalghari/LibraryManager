@@ -286,7 +286,7 @@ class LibraryManager {
 
 
 class Accounts {
-    
+
     public:
 
     string account_username;
@@ -322,7 +322,9 @@ class AccountManagement {
             cout << "\n--- Main Menu ---" << endl;
             cout << "1. Sign Up" << endl;
             cout << "2. Sign In" << endl;
-            cout << "3. Exit" << endl;
+            cout << "3. Delete Account" << endl;
+            cout << "4. Display Accounts" << endl;
+            cout << "5. Exit" << endl;
             cout << "Enter your choice: ";
             cin >> choice;
 
@@ -337,6 +339,11 @@ class AccountManagement {
                     }
                     break;
                 case 3:
+                    delete_account();
+                    break;
+                case 4:
+                    display_account_info();
+                case 5:
                     exit(0);
                 default:
                     cout << "Invalid choice. Please try again." << endl;
@@ -348,14 +355,23 @@ class AccountManagement {
         string username, password;
         cout << "Enter a username: ";
         cin >> username;
+
+        for (auto& acc : accounts) {
+            if(acc.account_username == username) {
+                cout << "Username already exists. Please choose a different one." << endl;
+                return;
+            }
+        }
+
         cout << "Enter a password: ";
         cin >> password;
 
         accounts.push_back(Accounts(username, password));
         cout << "Account created successfully." << endl;
+    
     }
 
-    bool sign_in() {
+    bool sign_in(){
         string username, password;
         cout << "Enter username: ";
         cin >> username;
@@ -374,6 +390,35 @@ class AccountManagement {
         }
     }
 
+    void display_account_info() {
+        if(accounts.empty()) {
+            cout <<"No accounts!" << endl;
+            return;
+        }
+        for (auto& acc : accounts) {
+                acc.display_account_info();
+        }
+    }
+
+    void delete_account() {
+        if(accounts.empty()) {
+            cout <<"No accounts!" << endl;
+            return;
+        }
+        string username;
+
+        cout << "Enter the username of the account to delete: " << endl;
+        cin >> username;
+
+        for (auto it = accounts.begin(); it!= accounts.end(); ++it) {
+            if (it->account_username == username) {
+                accounts.erase(it);
+                cout << "Account deleted successfully." << endl;
+                return;
+            }
+        }
+        cout << "Account not found." << endl;
+    }
 };
 
 int main() {
