@@ -1,4 +1,3 @@
-#pragma region headers
 #include <iostream>
 #include <vector>
 #include <string>
@@ -6,7 +5,6 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
-#pragma endregion
 
 using namespace std;
 
