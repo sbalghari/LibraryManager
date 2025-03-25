@@ -1,7 +1,0 @@
-Digital Logics
-Basic Algebra
-Linear Algebra
-Physics
-Calculus
-Artificial Intelligence
-Intro To Trigonometry
